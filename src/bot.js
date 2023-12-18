@@ -19,7 +19,7 @@ const player = new Player(client, {
         highWaterMark: 1 << 25
     }
 });
-player.extractors.loadDefault((ext) => ext !== 'YouTubeExtractor');
+player.extractors.loadDefault();
 
 client.commands = new Collection();
 client.commandArray = [];
