@@ -17,7 +17,9 @@ const player = new Player(client, {
     ytdlOptions: {
         quality: "highestaudio",
         highWaterMark: 1 << 25
-    }
+    },
+    skipFFmpeg: false,
+    useLegacyFFmpeg: false
 });
 player.extractors.loadDefault();
 
