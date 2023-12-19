@@ -1,10 +1,10 @@
 FROM node:lts-alpine
 
-WORKDIR /vinyl
+WORKDIR /vinz
 
 RUN apk update && \
     apk add --no-cache build-base python3 libtool ffmpeg autoconf automake && \
-    chown node:node /vinyl
+    chown node:node /vinz
 
 USER node
 

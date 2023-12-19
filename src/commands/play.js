@@ -23,7 +23,7 @@ module.exports = {
                 }
             });
 
-            return interaction.followUp(`**${track.title}** enqueued!`);
+            return interaction.followUp(`**${track.thumbnail}** enqueued!`);
         } catch (e) {
             return interaction.followUp(`Something went wrong: ${e}`);
         }

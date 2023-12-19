@@ -23,7 +23,7 @@ module.exports = (client, player) => {
 
                         for (const file of functionFiles) {
                             const event = require(`../events/${folder}/${file}`);
-                            player.on(event.name, (...args) => event.execute(...args, queue));
+                            player.events.on(event.name, (...args) => event.execute(...args, player));
                         }
                         break;
                     default:
