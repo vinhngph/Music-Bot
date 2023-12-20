@@ -3,6 +3,12 @@ const { Events } = require('discord.js');
 module.exports = {
     name: Events.InteractionCreate,
     async execute(interaction) {
+        const response = await interaction.deferReply({ ephemeral: true });
+
+        const channel = interaction.member.voice.channel;
+        if (!channel) return interaction.followUp({ content: 'You are not connected to a voice channel!', ephemeral: true });
+
+
         if (!interaction.isChatInputCommand()) return;
 
         const command = interaction.client.commands.get(interaction.commandName);
@@ -21,6 +27,8 @@ module.exports = {
             } else {
                 await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
             }
+        } finally {
+            response.delete();
         }
     },
 };

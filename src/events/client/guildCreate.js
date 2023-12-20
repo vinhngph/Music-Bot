@@ -8,8 +8,13 @@ module.exports = {
         const config = client.config;
         const serverCount = client.guilds.cache.size;
 
-        await rest.put(Routes.applicationGuildCommands(process.env.APP_ID, guild.id),
+        try {
+            await rest.put(Routes.applicationGuildCommands(process.env.APP_ID, guild.id),
             { body: commands })
-        console.log(`[-] Added ${config.italics(guild.name)} server - Total = ${config.italics(serverCount)}`);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            console.log(`[-] Added ${config.italics(guild.name)} server - Total = ${config.italics(serverCount)}`);
+        }
     }
 }
