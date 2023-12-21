@@ -2,7 +2,7 @@ const { ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const diamond = `<a:diamond:1130862729901637723>`;
 const musicPlaying = `<a:music:1130466218239873087>`;
 const waitThumnail = "https://cdn.discordapp.com/attachments/1128652851636351097/1177880647004594176/Untitled_design.png?ex=65741dd6&is=6561a8d6&hm=b1cdaaf197ff80c8ad62cafb2e4e5e22f4f0deddb865b28957d514ea6e4672aa&";
-const colorEmbed = '#2b2d31';
+const colorEmbed = '#000000';
 
 function queueList(queue) {
     const tracks = queue.tracks.toArray();
@@ -115,7 +115,7 @@ function moreButtons(queue) {
 
     buttons[5] = new ButtonBuilder()
         .setCustomId('delete')
-        .setLabel('1')
+        .setLabel(`🔲`)
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(!queue.connection)
 

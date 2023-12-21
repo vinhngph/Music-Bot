@@ -8,8 +8,6 @@ module.exports = {
 
 
         if (interaction.isChatInputCommand()) {
-            const response = await interaction.deferReply({ ephemeral: true });
-
             const command = interaction.client.commands.get(interaction.commandName);
 
             if (!command) {
@@ -21,13 +19,6 @@ module.exports = {
                 await command.execute(interaction);
             } catch (error) {
                 console.error(error);
-                if (interaction.replied || interaction.deferred) {
-                    await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-                } else {
-                    await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-                }
-            } finally {
-                return response.delete();
             }
         } else if (interaction.isButton()) {
             const button = client.buttons.get(interaction.customId);
