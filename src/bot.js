@@ -25,6 +25,7 @@ player.extractors.loadDefault();
 
 client.config = require('./modules/config.js');
 client.addStatus = new Map();
+client.stButtons = new Map();
 
 client.commands = new Collection();
 client.commandArray = [];

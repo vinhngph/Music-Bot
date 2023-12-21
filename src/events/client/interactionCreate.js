@@ -49,7 +49,7 @@ module.exports = {
                 const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
 
                 if (now < expirationTime) {
-                    return interaction.followUp({ content: `Please wait 3 seconds, you are on a cooldown for \`${button.data.name}\`.`, ephemeral: true });
+                    return interaction.reply({ content: `Please wait 3 seconds, you are on a cooldown for \`${button.data.name}\`.`, ephemeral: true });
                 }
             }
 
@@ -57,9 +57,9 @@ module.exports = {
             setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
             try {
-                button.execute(interaction, client);
+                return button.execute(interaction, client);
             } catch (error) {
-                console.error(error)
+                console.error(error);
             }
         } else if (interaction.isStringSelectMenu()) {
             const menu = client.endpoints.get(interaction.customId);

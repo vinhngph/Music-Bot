@@ -39,37 +39,38 @@ function media(track) {
     return embed;
 }
 
-function buttons(queue) {
+function basicButtons(queue) {
+    const tracks = queue.tracks.toArray();
+
     let buttons = []
     buttons[0] = new ButtonBuilder()
-        .setCustomId('exit')
-        .setLabel('🚫')
-        .setStyle(ButtonStyle.Danger)
-        .setDisabled(true)
+        .setCustomId('extend')
+        .setLabel('☰')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(!queue.connection)
 
     buttons[1] = new ButtonBuilder()
         .setCustomId('previous')
-        .setLabel('⏪')
+        .setLabel('◁')
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true)
+        .setDisabled(!queue.history.previousTrack ? true : false)
 
     buttons[2] = new ButtonBuilder()
         .setCustomId('pause-resume')
-        .setLabel('▶️')
+        .setLabel(queue.node.isPaused() ? '▶' : '||')
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true)
+        .setDisabled(!queue.connection)
 
     buttons[3] = new ButtonBuilder()
         .setCustomId('skip')
-        .setLabel('⏩️')
+        .setLabel('▷')
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true)
+        .setDisabled(!tracks[0])
 
     buttons[4] = new ButtonBuilder()
         .setCustomId('addSong')
-        .setLabel('➕')
-        .setStyle(ButtonStyle.Primary)
-
+        .setLabel('♫')
+        .setStyle(ButtonStyle.Secondary)
 
     return [
         {
@@ -77,6 +78,92 @@ function buttons(queue) {
             components: [buttons[0], buttons[1], buttons[2], buttons[3], buttons[4]]
         }
     ]
+}
+
+function moreButtons(queue) {
+    const tracks = queue.tracks.toArray();
+
+    let buttons = []
+    buttons[0] = new ButtonBuilder()
+        .setCustomId('extend')
+        .setLabel('☰')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(!queue.connection)
+
+    buttons[1] = new ButtonBuilder()
+        .setCustomId('previous')
+        .setLabel('◁')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(!queue.history.previousTrack ? true : false)
+
+    buttons[2] = new ButtonBuilder()
+        .setCustomId('pause-resume')
+        .setLabel(queue.node.isPaused() ? '▶' : '||')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(!queue.connection)
+
+    buttons[3] = new ButtonBuilder()
+        .setCustomId('skip')
+        .setLabel('▷')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(!tracks[0])
+
+    buttons[4] = new ButtonBuilder()
+        .setCustomId('addSong')
+        .setLabel('♫')
+        .setStyle(ButtonStyle.Secondary)
+
+    buttons[5] = new ButtonBuilder()
+        .setCustomId('delete')
+        .setLabel('1')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(!queue.connection)
+
+    buttons[6] = new ButtonBuilder()
+        .setCustomId('2')
+        .setLabel('2')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(true)
+
+    buttons[7] = new ButtonBuilder()
+        .setCustomId('3')
+        .setLabel('3')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(true)
+
+    buttons[8] = new ButtonBuilder()
+        .setCustomId('4')
+        .setLabel('4')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(true)
+
+    buttons[9] = new ButtonBuilder()
+        .setCustomId('5')
+        .setLabel('5')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(true)
+
+    return [
+        {
+            type: 1,
+            components: [buttons[0], buttons[1], buttons[2], buttons[3], buttons[4]]
+        },
+        {
+            type: 1,
+            components: [buttons[5], buttons[6], buttons[7], buttons[8], buttons[9]]
+        }
+    ]
+}
+
+function sendButtons(queue, status) {
+    if (!status) {
+        const buttons = basicButtons(queue);
+        return buttons;
+    }
+    else {
+        const buttons = moreButtons(queue);
+        return buttons;
+    }
 }
 
 function sendEmbeds(queue, track) {
@@ -95,6 +182,7 @@ function sendEmbeds(queue, track) {
 async function sendMessage(queue, track) {
     const client = queue.metadata.client;
     const channel = queue.metadata.channel;
+    const status = client.stButtons.get(channel.id);
 
     let embed;
     if (!track) {
@@ -106,9 +194,9 @@ async function sendMessage(queue, track) {
     } else {
         embed = sendEmbeds(queue, track);
     }
-    
-    const getButtons = buttons(queue);
-    
+
+    const getButtons = sendButtons(queue, status);
+
 
     const scan = await channel.messages.fetch({ limit: 5 });
     const curMess = scan.first();
@@ -152,7 +240,9 @@ async function sendMessage(queue, track) {
 module.exports = {
     queueList,
     media,
-    buttons,
+    basicButtons,
+    moreButtons,
+    sendButtons,
     sendEmbeds,
     sendMessage
 }

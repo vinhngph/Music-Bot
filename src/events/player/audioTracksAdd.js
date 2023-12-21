@@ -8,7 +8,6 @@ module.exports = {
         if (!addStatus) {
             return client.addStatus.set(channel.id, true);
         }
-
         return client.config.sendMessage(queue, queue.currentTrack);
     }
 }
