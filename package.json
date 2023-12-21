@@ -5,7 +5,11 @@
   "author": "silverb",
   "license": "MIT",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
+    "build": "yarn install --production",
     "start": "node ./src/index.js",
     "test": "nodemon ./src/index.js"
   },

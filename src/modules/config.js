@@ -106,6 +106,9 @@ async function sendMessage(queue, track) {
     } else {
         embed = sendEmbeds(queue, track);
     }
+    
+    const getButtons = buttons(queue);
+    
 
     const scan = await channel.messages.fetch({ limit: 5 });
     const curMess = scan.first();
@@ -115,7 +118,7 @@ async function sendMessage(queue, track) {
 
         if (botMessages.size === 1) {
             const botMess = botMessages.first();
-            return botMess.edit({ embeds: embed });
+            return botMess.edit({ embeds: embed, components: getButtons });
         }
 
         if (botMessages.size > 1) {
@@ -128,7 +131,7 @@ async function sendMessage(queue, track) {
             } catch (error) {
                 console.error(error);
             } finally {
-                return channel.send({ embeds: embed });
+                return channel.send({ embeds: embed, components: getButtons });
             }
         }
     } else {
@@ -141,7 +144,7 @@ async function sendMessage(queue, track) {
         } catch (error) {
             console.error(error);
         } finally {
-            return channel.send({ embeds: embed });
+            return channel.send({ embeds: embed, components: getButtons });
         }
     }
 }

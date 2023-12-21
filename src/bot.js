@@ -29,6 +29,11 @@ client.addStatus = new Map();
 client.commands = new Collection();
 client.commandArray = [];
 
+client.buttons = new Collection();
+client.endpoints = new Collection();
+client.modals = new Collection();
+client.cooldowns = new Collection();
+
 process.on('unhandledRejection', async (reason, promise) => { });
 process.on('uncaughtException', (err) => { });
 process.on('uncaughtExceptionMonitor', (err, origin) => { });
@@ -36,7 +41,8 @@ process.on('uncaughtExceptionMonitor', (err, origin) => { });
 const functionFiles = fs.readdirSync(`./src/handlers`).filter(file => file.endsWith('.js'));
 for (const file of functionFiles) require(`./handlers/${file}`)(client, player);
 
-client.handleEvents();
 client.handleCommands();
+client.handleComponents();
+client.handleEvents();
 
 client.login(process.env.TOKEN);

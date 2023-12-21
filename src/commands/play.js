@@ -6,7 +6,7 @@ module.exports = {
         .setName("play")
         .setDescription("Let's enjoy music")
         .addStringOption(option => option.setName("search").setDescription("Enter the name or link of the music you want to listen to").setRequired(true)),
-    async execute(interaction, message) {
+    async execute(interaction) {
         const player = useMainPlayer();
         const query = await interaction.options.get("search").value;
 
