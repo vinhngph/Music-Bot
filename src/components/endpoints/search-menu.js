@@ -5,12 +5,11 @@ module.exports = {
         name: `search-menu`
     },
     async execute(interaction) {
-        let query = interaction.values[0];
-        query = "https://" + query;
+        const query = interaction.values[0];
 
         const player = useMainPlayer();
 
-        player.play(interaction.member.voice.channel, query, {
+        return player.play(interaction.member.voice.channel, query, {
             nodeOptions: {
                 metadata: interaction,
                 disableFilterer: true,

@@ -25,7 +25,7 @@ function queueList(queue) {
     return embed;
 }
 
-function media(track) {
+function media(track, queue) {
     const toCamelCase = inputString => {
         let words = inputString.split('_');
 
@@ -55,7 +55,7 @@ function basicButtons(queue) {
     let buttons = []
     buttons[0] = new ButtonBuilder()
         .setCustomId('extend')
-        .setLabel('☰')
+        .setLabel('▽')
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(!queue.connection)
 
@@ -67,7 +67,7 @@ function basicButtons(queue) {
 
     buttons[2] = new ButtonBuilder()
         .setCustomId('pause-resume')
-        .setLabel(queue.node.isPaused() ? '▶' : '||')
+        .setLabel(queue.node.isPaused() ? '▶' : '❚❚')
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(!queue.connection)
 
@@ -92,11 +92,32 @@ function basicButtons(queue) {
 
 function moreButtons(queue) {
     const tracks = queue.tracks.toArray();
+    const loopSt = (queue) => {
+        const mode = queue.repeatMode;
+
+        if (mode === 0 || mode === 3) {
+            return '⟳';
+        } else if (mode === 1) {
+            return '⥬';
+        } else if (mode === 2) {
+            return '⇌';
+        }
+    }
+
+    const autoplaySt = (queue) => {
+        const mode = queue.repeatMode;
+
+        if (mode === 3) {
+            return '♾️';
+        } else {
+            return '∞';
+        }
+    }
 
     let buttons = []
     buttons[0] = new ButtonBuilder()
         .setCustomId('extend')
-        .setLabel('☰')
+        .setLabel('▼')
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(!queue.connection)
 
@@ -108,7 +129,7 @@ function moreButtons(queue) {
 
     buttons[2] = new ButtonBuilder()
         .setCustomId('pause-resume')
-        .setLabel(queue.node.isPaused() ? '▶' : '||')
+        .setLabel(queue.node.isPaused() ? '▶' : '❚❚')
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(!queue.connection)
 
@@ -125,21 +146,21 @@ function moreButtons(queue) {
 
     buttons[5] = new ButtonBuilder()
         .setCustomId('delete')
-        .setLabel(`🔲`)
+        .setLabel(`⊘`)
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(!queue.connection)
 
     buttons[6] = new ButtonBuilder()
-        .setCustomId('2')
-        .setLabel('2')
+        .setCustomId('loop')
+        .setLabel(`${loopSt(queue)}`)
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true)
+        .setDisabled(false)
 
     buttons[7] = new ButtonBuilder()
-        .setCustomId('3')
-        .setLabel('3')
+        .setCustomId('autoplay')
+        .setLabel(`${autoplaySt(queue)}`)
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true)
+        .setDisabled(false)
 
     buttons[8] = new ButtonBuilder()
         .setCustomId('4')
@@ -177,7 +198,7 @@ function sendButtons(queue, status) {
 }
 
 function sendEmbeds(queue, track) {
-    const embed = media(track);
+    const embed = media(track, queue);
     const tracks = queue.tracks.toArray();
 
     if (tracks[0]) {

@@ -6,7 +6,6 @@ module.exports = {
         const channel = interaction.member.voice.channel;
         if (!channel) return interaction.followUp({ content: 'You are not connected to a voice channel!', ephemeral: true });
 
-
         if (interaction.isChatInputCommand()) {
             const command = interaction.client.commands.get(interaction.commandName);
 
@@ -63,7 +62,6 @@ module.exports = {
                 console.error(error);
             }
         } else if (interaction.isModalSubmit()) {
-            const response = await interaction.deferReply({ ephemeral: true });
             const modal = client.modals.get(interaction.customId);
 
             if (!modal) return new Error("There is no code for this modal.");
@@ -72,9 +70,7 @@ module.exports = {
                 modal.execute(interaction, client);
             } catch (error) {
                 console.error(error);
-            } finally {
-                return response.delete();
             }
         }
-    },
-};
+    }
+}
