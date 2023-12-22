@@ -2,11 +2,11 @@ module.exports = {
     name: 'audioTracksAdd',
     async execute(queue) {
         const client = queue.metadata.client;
-        const channel = queue.metadata.channel;
+        const guildId = queue.metadata.guildId;
 
-        const addStatus = await client.addStatus.get(channel.id);
+        const addStatus = await client.addStatus.get(guildId);
         if (!addStatus) {
-            return client.addStatus.set(channel.id, true);
+            return client.addStatus.set(guildId, true);
         }
         return client.config.sendMessage(queue, queue.currentTrack);
     }

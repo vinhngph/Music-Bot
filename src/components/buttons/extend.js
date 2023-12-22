@@ -9,16 +9,18 @@ module.exports = {
         try {
             const client = interaction.client;
             const channel = interaction.channel;
-            const queue = useQueue(interaction.guildId);
+            const guildId = interaction.guildId;
 
-            const status = client.stButtons.get(channel.id);
+            const queue = useQueue(guildId);
+
+            const status = client.stButtons.get(guildId);
             if (!status) {
-                await client.stButtons.set(channel.id, true);
+                await client.stButtons.set(guildId, true);
             } else {
-                await client.stButtons.set(channel.id, false);
+                await client.stButtons.set(guildId, false);
             }
 
-            const curStatus = client.stButtons.get(channel.id);
+            const curStatus = client.stButtons.get(guildId);
 
             const scan = await channel.messages.fetch({ limit: 1 });
             const curMess = scan.first();

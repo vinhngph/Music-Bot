@@ -25,7 +25,7 @@ function queueList(queue) {
     return embed;
 }
 
-function media(track, queue) {
+function media(track) {
     const toCamelCase = inputString => {
         let words = inputString.split('_');
 
@@ -92,6 +92,8 @@ function basicButtons(queue) {
 
 function moreButtons(queue) {
     const tracks = queue.tracks.toArray();
+    const checkMode = queue.repeatMode;
+
     const loopSt = (queue) => {
         const mode = queue.repeatMode;
 
@@ -137,7 +139,7 @@ function moreButtons(queue) {
         .setCustomId('skip')
         .setLabel('▷')
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(!tracks[0])
+        .setDisabled(!(checkMode === 3 ? true : false))
 
     buttons[4] = new ButtonBuilder()
         .setCustomId('addSong')
@@ -163,16 +165,16 @@ function moreButtons(queue) {
         .setDisabled(false)
 
     buttons[8] = new ButtonBuilder()
-        .setCustomId('4')
+        .setCustomId('shuffle')
         .setLabel('4')
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true)
+        .setDisabled(false)
 
     buttons[9] = new ButtonBuilder()
-        .setCustomId('5')
+        .setCustomId('insertTrack')
         .setLabel('5')
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(true)
+        .setDisabled(false)
 
     return [
         {
@@ -213,7 +215,10 @@ function sendEmbeds(queue, track) {
 async function sendMessage(queue, track) {
     const client = queue.metadata.client;
     const channel = queue.metadata.channel;
-    const status = client.stButtons.get(channel.id);
+
+    const guildId = queue.metadata.guildId;
+
+    const status = client.stButtons.get(guildId);
 
     let embed;
     if (!track) {
@@ -230,6 +235,10 @@ async function sendMessage(queue, track) {
 
     const scan = await channel.messages.fetch({ limit: 5 });
     const curMess = scan.first();
+
+    if (!curMess) {
+        return channel.send({ embeds: embed, components: getButtons });
+    }
 
     if (curMess.author.id === client.user.id) {
         const botMessages = scan.filter((msg) => msg.author.bot && msg.author.id === client.user.id);
