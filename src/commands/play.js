@@ -12,37 +12,38 @@ module.exports = {
         const player = useMainPlayer();
         const query = await interaction.options.get("search").value;
 
-        let response;
-        try {
-            const result = await player.search(query, {
-                searchEngine: QueryType.SPOTIFY_SEARCH,
-                requestedBy: interaction.member
-            });
+        const result = await player.search(query, {
+            searchEngine: QueryType.APPLE_MUSIC_SEARCH,
+            requestedBy: interaction.member
+        });
 
-            const allTracks = result.tracks.slice(0, 10);
-
-            const options = allTracks.map((track) => {
-                const option = new StringSelectMenuOptionBuilder()
-                    .setLabel(track.title)
-                    .setValue(track.url)
-                    .setDescription(`${track.author} • ${track.duration}`)
-                return option;
-            });
-
-            const select = new StringSelectMenuBuilder()
-                .setCustomId('search-menu')
-                .setPlaceholder(`🔎 [ ${query} ]`)
-                .addOptions(options)
-
-            const actionRow = new ActionRowBuilder().addComponents(select);
-
-            response = await interaction.followUp({
-                components: [actionRow],
-                ephemeral: true
-            });
-        } catch (error) {
+        if (!result) {
             return interaction.followUp({ content: `Your search did not match any results.`, ephemeral: true });
         }
+        const allTracks = result.tracks.slice(0, 10);
+
+        const options = allTracks.map((track) => {
+            let url = track.url;
+            url = url.replace(/^https:\/\//, '');
+
+            const option = new StringSelectMenuOptionBuilder()
+                .setLabel(track.title)
+                .setValue(url)
+                .setDescription(`${track.author} • ${track.duration}`)
+            return option;
+        });
+
+        const select = new StringSelectMenuBuilder()
+            .setCustomId('search-menu')
+            .setPlaceholder(`🔎 [ ${query} ]`)
+            .addOptions(options)
+
+        const actionRow = new ActionRowBuilder().addComponents(select);
+
+        const response = await interaction.followUp({
+            components: [actionRow],
+            ephemeral: true
+        });
 
         const collectorFilter = i => i.user.id === interaction.user.id
         try {

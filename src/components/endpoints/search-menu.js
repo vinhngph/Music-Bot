@@ -5,7 +5,9 @@ module.exports = {
         name: `search-menu`
     },
     async execute(interaction) {
-        const query = interaction.values[0];
+        let query = interaction.values[0];
+        query = "https://" + query;
+
         const player = useMainPlayer();
 
         player.play(interaction.member.voice.channel, query, {

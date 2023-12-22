@@ -26,6 +26,16 @@ function queueList(queue) {
 }
 
 function media(track) {
+    const toCamelCase = inputString => {
+        let words = inputString.split('_');
+
+        let camelCaseString = words
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+
+        return camelCaseString;
+    };
+
     const embed = new EmbedBuilder()
         .setColor(colorEmbed)
         .setTitle(`**${track.title}**`)
@@ -33,7 +43,7 @@ function media(track) {
         .addFields(
             { name: 'Author', value: `${track.author} ${diamond}`, inline: true },
             { name: 'Duration', value: `${track.duration}`, inline: true },
-            { name: 'Source', value: `${track.source.charAt(0).toUpperCase() + track.source.substring(1)}`, inline: true },
+            { name: 'Source', value: `${toCamelCase(track.source)}`, inline: true },
         )
         .setImage(track.thumbnail)
     return embed;
@@ -196,7 +206,6 @@ async function sendMessage(queue, track) {
     }
 
     const getButtons = sendButtons(queue, status);
-
 
     const scan = await channel.messages.fetch({ limit: 5 });
     const curMess = scan.first();
