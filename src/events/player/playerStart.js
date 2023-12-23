@@ -7,6 +7,6 @@ module.exports = {
         }
         const client = queue.metadata.client;
 
-        return client.config.sendMessage(queue, track);
+        return client.config.sendMessage(queue, queue.currentTrack);
     }
 }

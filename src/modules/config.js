@@ -1,8 +1,8 @@
 const { ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const musicPlaying = `<a:music:1130466218239873087>`;
 const waitThumbnail = "https://cdn.discordapp.com/attachments/1128652851636351097/1187989818207117332/ad0f64da6fcca534.png?ex=6598e4bc&is=65866fbc&hm=043f0a31247ca115373d394c6adf78484c3448cdf435d0775445fec282fea2e3&";
-const spotify = "https://cdn.discordapp.com/attachments/1128652851636351097/1187998488932384828/spotify.png?ex=6598eccf&is=658677cf&hm=50427d4385a767791e395ec36872cc056b427a5a98d2ef5041373d60ac85ac41&"
 const colorEmbed = '#2b2d31';
+const taskbarEmpty = 'https://cdn.discordapp.com/attachments/1128652851636351097/1188014035002732554/empty.png?ex=6598fb4a&is=6586864a&hm=05c72b21763877160cb12012762a3ba7d7d751953fbcd5eedd581952704a8c50&';
 
 function queueList(queue) {
     const tracks = queue.tracks.toArray();
@@ -26,15 +26,26 @@ function queueList(queue) {
 }
 
 function media(track) {
-    const toCamelCase = inputString => {
-        let words = inputString.split('_');
+    let taskbar;
+    switch (track.source) {
+        case 'apple_music':
+            taskbar = "https://cdn.discordapp.com/attachments/1128652851636351097/1188011792916549662/apple_music.png?ex=6598f933&is=65868433&hm=dd2230b2d8688c971403ab3ad3000760de9f1b45cb6891681781a53aa0e0fd1b&";
+            break;
 
-        let camelCaseString = words
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join(' ');
+        case 'spotify':
+            taskbar = "https://cdn.discordapp.com/attachments/1128652851636351097/1188011827238539335/spotify.png?ex=6598f93b&is=6586843b&hm=60724c3c5c0d18efb6c7e2628617644e2bdaa524765c8315d48c4282f56e40cf&";
+            break;
 
-        return camelCaseString;
-    };
+        case 'soundcloud':
+            taskbar = "https://cdn.discordapp.com/attachments/1128652851636351097/1188011809463078983/soundcloud.png?ex=6598f937&is=65868437&hm=1358c30f4ef70edca37c67698a4966b0eafc37fdd4c13182c65492ce48299039&";
+            break;
+
+        case 'youtube':
+            taskbar = "https://cdn.discordapp.com/attachments/1128652851636351097/1188011852278546432/youtube.png?ex=6598f941&is=65868441&hm=243ee22baae0a5068d00a7f626cc8acea8b6bbf2fa66de8967adbb50e79c3e6d&";
+            break;
+        default:
+            break;
+    }
 
     const embed = new EmbedBuilder()
         .setColor(colorEmbed)
@@ -45,7 +56,7 @@ function media(track) {
             { name: 'Duration', value: `${track.duration}`, inline: true }
         )
         .setThumbnail(track.thumbnail)
-        .setImage(spotify)
+        .setImage(taskbar)
     return embed;
 }
 
@@ -98,11 +109,11 @@ function moreButtons(queue) {
         const mode = queue.repeatMode;
 
         if (mode === 0 || mode === 3) {
-            return '⟳';
+            return '🔁';
         } else if (mode === 1) {
-            return '⥬';
+            return '🔂';
         } else if (mode === 2) {
-            return '⇌';
+            return '🔁';
         }
     }
 
@@ -155,7 +166,7 @@ function moreButtons(queue) {
     buttons[6] = new ButtonBuilder()
         .setCustomId('loop')
         .setLabel(`${loopSt(queue)}`)
-        .setStyle(ButtonStyle.Secondary)
+        .setStyle(!checkMode ? ButtonStyle.Secondary : ButtonStyle.Success)
         .setDisabled(false)
 
     buttons[7] = new ButtonBuilder()
@@ -225,7 +236,12 @@ async function sendMessage(queue, track) {
         const waitEmbed = new EmbedBuilder()
             .setColor(colorEmbed)
             .setTitle(`**EMPTY PLAYLIST**`)
-            .setImage(waitThumbnail)
+            .addFields(
+                { name: 'Author', value: 'N/A', inline: true },
+                { name: 'Duration', value: 'N/A', inline: true }
+            )
+            .setThumbnail(waitThumbnail)
+            .setImage(taskbarEmpty)
         embed = [waitEmbed]
     } else {
         embed = sendEmbeds(queue, track);

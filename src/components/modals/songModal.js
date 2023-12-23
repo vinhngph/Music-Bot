@@ -53,24 +53,43 @@ module.exports = {
             }
         }
 
-        const result = await player.search(query, {
-            searchEngine: sEngine(engine),
-            requestedBy: interaction.member
-        });
-
-        if (!result) {
+        let result;
+        try {
+            result = await player.search(query, {
+                searchEngine: sEngine(engine),
+                requestedBy: interaction.member
+            });
+        } catch (error) {
             return interaction.editReply({ content: `Your search did not match any results.`, ephemeral: true });
+        }
+
+        let pattern;
+        switch (engine) {
+            case 'apple_music':
+                pattern = /^https:\/\/music\.apple\.com\//;
+                break;
+            case 'spotify':
+                pattern = /^https:\/\/open\.spotify\.com\//;
+                break;
+            case 'soundcloud':
+                pattern = /^https:\/\/soundcloud\.com\//;
+                break;
+            case 'youtube':
+                pattern = /^https:\/\/www\.youtube\.com\//;
+                break;
+
+            default:
+                break;
         }
 
         const allTracks = result.tracks.slice(0, 10);
         const options = allTracks.map((track) => {
-            if (track.url.length > 100) {
-                return interaction.editReply({ content: `Your search did not match any results.`, ephemeral: true });
-            }
+            let url = track.url;
+            url = url.replace(pattern, '');
 
             const option = new StringSelectMenuOptionBuilder()
                 .setLabel(track.title)
-                .setValue(track.url)
+                .setValue(url)
                 .setDescription(`${track.author} • ${track.duration}`)
             return option;
         });

@@ -4,7 +4,7 @@ module.exports = {
     name: Events.InteractionCreate,
     async execute(interaction, client) {
         const channel = interaction.member.voice.channel;
-        if (!channel) return interaction.followUp({ content: 'You are not connected to a voice channel!', ephemeral: true });
+        if (!channel) return interaction.reply({ content: 'You are not connected to a voice channel!', ephemeral: true });
 
         if (interaction.isChatInputCommand()) {
             const command = interaction.client.commands.get(interaction.commandName);
