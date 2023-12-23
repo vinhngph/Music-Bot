@@ -51,10 +51,7 @@ function media(track) {
         .setColor(colorEmbed)
         .setTitle(`**${track.title}**`)
         .setURL(track.url)
-        .addFields(
-            { name: 'Author', value: `${track.author}`, inline: true },
-            { name: 'Duration', value: `${track.duration}`, inline: true }
-        )
+        .setDescription(`${track.duration}\n\n**${track.author}**`)
         .setThumbnail(track.thumbnail)
         .setImage(taskbar)
     return embed;
@@ -233,10 +230,7 @@ async function sendMessage(queue, track) {
         const waitEmbed = new EmbedBuilder()
             .setColor(colorEmbed)
             .setTitle(`**EMPTY PLAYLIST**`)
-            .addFields(
-                { name: 'Author', value: 'N/A', inline: true },
-                { name: 'Duration', value: 'N/A', inline: true }
-            )
+            .setDescription(`N/A\n\n**N/A**`)
             .setThumbnail(waitThumbnail)
             .setImage(taskbarEmpty)
         embed = [waitEmbed]
