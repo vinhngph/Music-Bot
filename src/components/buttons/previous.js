@@ -10,7 +10,6 @@ module.exports = {
             const queue = useHistory(interaction.guildId);
             queue.previous();
         } catch (error) {
-            console.error(error);
         } finally {
             return response.delete();
         }

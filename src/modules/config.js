@@ -37,7 +37,7 @@ function media(track) {
             break;
 
         case 'soundcloud':
-            taskbar = "https://cdn.discordapp.com/attachments/1128652851636351097/1188011809463078983/soundcloud.png?ex=6598f937&is=65868437&hm=1358c30f4ef70edca37c67698a4966b0eafc37fdd4c13182c65492ce48299039&";
+            taskbar = "https://cdn.discordapp.com/attachments/1128652851636351097/1188045855538810900/soundcloud.png?ex=659918ec&is=6586a3ec&hm=555ab6a9df3d95ca5f4e1ba8b8662f6cd2c771046294247309f953e65255d453&";
             break;
 
         case 'youtube':
@@ -62,6 +62,7 @@ function media(track) {
 
 function basicButtons(queue) {
     const tracks = queue.tracks.toArray();
+    const mode = queue.repeatMode;
 
     let buttons = []
     buttons[0] = new ButtonBuilder()
@@ -86,7 +87,7 @@ function basicButtons(queue) {
         .setCustomId('skip')
         .setLabel('▷')
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(!tracks[0])
+        .setDisabled(!(mode === 3 || tracks[0] ? true : false))
 
     buttons[4] = new ButtonBuilder()
         .setCustomId('addSong')
@@ -103,11 +104,9 @@ function basicButtons(queue) {
 
 function moreButtons(queue) {
     const tracks = queue.tracks.toArray();
-    const checkMode = queue.repeatMode;
+    const mode = queue.repeatMode;
 
-    const loopSt = (queue) => {
-        const mode = queue.repeatMode;
-
+    const loopSt = () => {
         if (mode === 0 || mode === 3) {
             return '🔁';
         } else if (mode === 1) {
@@ -117,9 +116,7 @@ function moreButtons(queue) {
         }
     }
 
-    const autoplaySt = (queue) => {
-        const mode = queue.repeatMode;
-
+    const autoplaySt = () => {
         if (mode === 3) {
             return '♾️';
         } else {
@@ -150,7 +147,7 @@ function moreButtons(queue) {
         .setCustomId('skip')
         .setLabel('▷')
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(!(checkMode === 3 || tracks[0] ? true : false))
+        .setDisabled(!(mode === 3 || tracks[0] ? true : false))
 
     buttons[4] = new ButtonBuilder()
         .setCustomId('addSong')
@@ -165,14 +162,14 @@ function moreButtons(queue) {
 
     buttons[6] = new ButtonBuilder()
         .setCustomId('loop')
-        .setLabel(`${loopSt(queue)}`)
-        .setStyle(!checkMode ? ButtonStyle.Secondary : ButtonStyle.Success)
+        .setLabel(`${loopSt()}`)
+        .setStyle((mode === 3 || mode === 0) ? ButtonStyle.Secondary : ButtonStyle.Success)
         .setDisabled(false)
 
     buttons[7] = new ButtonBuilder()
         .setCustomId('autoplay')
-        .setLabel(`${autoplaySt(queue)}`)
-        .setStyle(checkMode === 3 ? ButtonStyle.Success : ButtonStyle.Secondary)
+        .setLabel(`${autoplaySt()}`)
+        .setStyle(mode === 3 ? ButtonStyle.Success : ButtonStyle.Secondary)
         .setDisabled(false)
 
     buttons[8] = new ButtonBuilder()

@@ -10,7 +10,6 @@ module.exports = {
             const queue = useQueue(interaction.guildId);
             queue.node.skip();
         } catch (error) {
-            console.error(error);
         } finally {
             return response.delete();
         }

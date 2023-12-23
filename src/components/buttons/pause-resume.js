@@ -15,7 +15,6 @@ module.exports = {
                 queue.node.resume();
             }
         } catch (error) {
-            console.error(error);
         } finally {
             return response.delete();
         }

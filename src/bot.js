@@ -28,6 +28,9 @@ player.extractors.register(SoundCloudExtractor);
 player.extractors.register(YoutubeExtractor);
 
 client.config = require('./modules/config.js');
+const exe = require('./modules/play.js');
+client.play = exe.play;
+
 client.addStatus = new Map();
 client.stButtons = new Map();
 client.engine = new Map();

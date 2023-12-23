@@ -36,7 +36,6 @@ module.exports = {
                 return interaction.editReply({ content: `You have not chosen anything.`, ephemeral: true, components: [] })
             }
         } catch (error) {
-            console.error(error);
         }
     }
 }

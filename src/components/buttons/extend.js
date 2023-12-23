@@ -31,7 +31,6 @@ module.exports = {
                 curMess.edit({ components: buttons });
             }
         } catch (error) {
-            console.error(error);
         } finally {
             return response.delete();
         }

@@ -18,7 +18,6 @@ module.exports = {
 
             client.config.sendMessage(queue, queue.currentTrack);
         } catch (error) {
-            console.error(error);
         } finally {
             return response.delete();
         }
