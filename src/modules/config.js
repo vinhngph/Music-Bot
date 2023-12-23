@@ -1,8 +1,8 @@
 const { ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const diamond = `<a:diamond:1130862729901637723>`;
 const musicPlaying = `<a:music:1130466218239873087>`;
-const waitThumnail = "https://cdn.discordapp.com/attachments/1128652851636351097/1177880647004594176/Untitled_design.png?ex=65741dd6&is=6561a8d6&hm=b1cdaaf197ff80c8ad62cafb2e4e5e22f4f0deddb865b28957d514ea6e4672aa&";
-const colorEmbed = '#000000';
+const waitThumbnail = "https://cdn.discordapp.com/attachments/1128652851636351097/1187989818207117332/ad0f64da6fcca534.png?ex=6598e4bc&is=65866fbc&hm=043f0a31247ca115373d394c6adf78484c3448cdf435d0775445fec282fea2e3&";
+const spotify = "https://cdn.discordapp.com/attachments/1128652851636351097/1187998488932384828/spotify.png?ex=6598eccf&is=658677cf&hm=50427d4385a767791e395ec36872cc056b427a5a98d2ef5041373d60ac85ac41&"
+const colorEmbed = '#2b2d31';
 
 function queueList(queue) {
     const tracks = queue.tracks.toArray();
@@ -41,11 +41,11 @@ function media(track) {
         .setTitle(`**${track.title}**`)
         .setURL(track.url)
         .addFields(
-            { name: 'Author', value: `${track.author} ${diamond}`, inline: true },
-            { name: 'Duration', value: `${track.duration}`, inline: true },
-            { name: 'Source', value: `${toCamelCase(track.source)}`, inline: true },
+            { name: 'Author', value: `${track.author}`, inline: true },
+            { name: 'Duration', value: `${track.duration}`, inline: true }
         )
-        .setImage(track.thumbnail)
+        .setThumbnail(track.thumbnail)
+        .setImage(spotify)
     return embed;
 }
 
@@ -139,7 +139,7 @@ function moreButtons(queue) {
         .setCustomId('skip')
         .setLabel('▷')
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(!(checkMode === 3 ? true : false))
+        .setDisabled(!(checkMode === 3 || tracks[0] ? true : false))
 
     buttons[4] = new ButtonBuilder()
         .setCustomId('addSong')
@@ -161,18 +161,18 @@ function moreButtons(queue) {
     buttons[7] = new ButtonBuilder()
         .setCustomId('autoplay')
         .setLabel(`${autoplaySt(queue)}`)
-        .setStyle(ButtonStyle.Secondary)
+        .setStyle(checkMode === 3 ? ButtonStyle.Success : ButtonStyle.Secondary)
         .setDisabled(false)
 
     buttons[8] = new ButtonBuilder()
         .setCustomId('shuffle')
-        .setLabel('4')
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(false)
+        .setLabel('🔀')
+        .setStyle(queue.isShuffling ? ButtonStyle.Success : ButtonStyle.Secondary)
+        .setDisabled(tracks[1] ? false : true)
 
     buttons[9] = new ButtonBuilder()
         .setCustomId('insertTrack')
-        .setLabel('5')
+        .setLabel('⇪')
         .setStyle(ButtonStyle.Secondary)
         .setDisabled(false)
 
@@ -225,7 +225,7 @@ async function sendMessage(queue, track) {
         const waitEmbed = new EmbedBuilder()
             .setColor(colorEmbed)
             .setTitle(`**EMPTY PLAYLIST**`)
-            .setImage(waitThumnail)
+            .setImage(waitThumbnail)
         embed = [waitEmbed]
     } else {
         embed = sendEmbeds(queue, track);

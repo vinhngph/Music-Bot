@@ -9,8 +9,21 @@ module.exports = {
         try {
             const queue = useQueue(interaction.guildId);
             const client = interaction.client;
+            const channel = interaction.channel;
+            const guildId = interaction.guildId;
+
             queue.toggleShuffle();
-            client.config.sendMessage(queue, queue.currentTrack);
+
+            const curStatus = client.stButtons.get(guildId);
+
+            const scan = await channel.messages.fetch({ limit: 1 });
+            const curMess = scan.first();
+
+            if (curMess && (curMess.author.id === client.user.id)) {
+                const buttons = client.config.sendButtons(queue, curStatus);
+
+                curMess.edit({ components: buttons });
+            }
         } catch (error) {
             console.error(error);
         } finally {
