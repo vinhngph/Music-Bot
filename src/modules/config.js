@@ -258,10 +258,11 @@ async function sendMessage(queue, track) {
         if (botMessages.size > 1) {
             const scanAll = await channel.messages.fetch();
             const allMess = scanAll.filter((msg) => msg.author.bot && msg.author.id === client.user.id);
-            const oldMess = allMess.map((msg) => msg.id);
 
             try {
-                await channel.bulkDelete(oldMess);
+                for (const msg of allMess.values()) {
+                    await msg.delete()
+                };
             } catch (error) {
                 console.error(error);
             } finally {
@@ -271,10 +272,11 @@ async function sendMessage(queue, track) {
     } else {
         const scanAll = await channel.messages.fetch();
         const allMess = scanAll.filter((msg) => msg.author.bot && msg.author.id === client.user.id);
-        const oldMess = allMess.map((msg) => msg.id);
 
         try {
-            await channel.bulkDelete(oldMess);
+            for (const msg of allMess.values()) {
+                await msg.delete()
+            };
         } catch (error) {
             console.error(error);
         } finally {
