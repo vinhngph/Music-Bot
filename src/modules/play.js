@@ -7,9 +7,16 @@ async function play(interaction, query, typePlay) {
     const player = useMainPlayer();
 
     if (validURL.isUri(query)) {
+        //checking the duration 
+        const check = await player.search(query);
+        if (check.tracks[0].durationMS > 10800000) {
+            return interaction.editReply({ content: 'This music link is over 3 hours.', ephemeral: true });
+        }
+
+        //main play engine
         try {
             if (typePlay !== 'insert-menu') {
-                player.play(interaction.member.voice.channel, query, {
+                await player.play(interaction.member.voice.channel, query, {
                     nodeOptions: {
                         metadata: interaction,
                         disableFilterer: true,
