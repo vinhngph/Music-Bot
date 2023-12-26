@@ -3,6 +3,6 @@ module.exports = {
     async execute(queue) {
         const client = queue.metadata.client;
 
-        return client.config.sendMessage(queue, queue.currentTrack);
+        return client.config.sendMessage(queue);
     }
 }

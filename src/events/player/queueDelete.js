@@ -1,8 +1,7 @@
 module.exports = {
     name: 'queueDelete',
     async execute(queue) {
-        const client = queue.metadata.client;
-        const guildId = queue.metadata.guildId;
+        const { client, guildId } = queue.metadata;
 
         await client.addStatus.set(guildId, false);
         await client.stButtons.set(guildId, false);

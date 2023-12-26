@@ -18,6 +18,6 @@ module.exports = {
             queue.setRepeatMode(QueueRepeatMode.QUEUE);
         }
 
-        return client.config.sendMessage(queue, queue.currentTrack);
+        return client.config.sendMessage(queue);
     }
 }

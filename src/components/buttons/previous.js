@@ -6,12 +6,9 @@ module.exports = {
     },
     async execute(interaction) {
         const response = await interaction.deferReply({ ephemeral: true });
-        try {
-            const queue = useHistory(interaction.guildId);
-            queue.previous();
-        } catch (error) {
-        } finally {
-            return response.delete();
-        }
+        const queue = useHistory(interaction.guildId);
+        queue.previous();
+
+        return response.delete();
     }
 }
