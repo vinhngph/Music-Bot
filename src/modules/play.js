@@ -2,6 +2,9 @@ const { StringSelectMenuOptionBuilder, StringSelectMenuBuilder, ActionRowBuilder
 const validURL = require('valid-url');
 const { useMainPlayer, useQueue } = require('discord-player');
 
+const MAX_DURATION = 10800000; // 3 hours in milliseconds
+const COLLECTOR_TIMEOUT = 60000; // 60 seconds
+
 async function play(interaction, query, typePlay) {
     const checkResponse = await interaction.deferReply({ ephemeral: true });
     const player = useMainPlayer();
@@ -10,7 +13,7 @@ async function play(interaction, query, typePlay) {
     if (validURL.isUri(query)) {
         //checking the duration 
         const check = await player.search(query);
-        if (check.tracks[0].durationMS > 10800000) {
+        if (check.tracks[0].durationMS > MAX_DURATION) {
             return interaction.editReply({ content: 'This music link is over 3 hours.', ephemeral: true });
         }
 
@@ -37,8 +40,7 @@ async function play(interaction, query, typePlay) {
         }
     }
 
-    const client = interaction.client;
-    const guildId = interaction.guildId;
+    const { client, guildId } = interaction;
     const bot = client.bot;
     const engine = bot.getEngine(client, guildId);
 
@@ -58,11 +60,10 @@ async function play(interaction, query, typePlay) {
             return null;
         }
 
-        const option = new StringSelectMenuOptionBuilder()
+        return new StringSelectMenuOptionBuilder()
             .setLabel(bot.shortString(track.title))
             .setValue(bot.shortUrl(url, engine))
             .setDescription(`${bot.shortString(track.author)} • ${track.duration}`)
-        return option;
     }).filter(option => option !== null);
 
     const select = new StringSelectMenuBuilder()
@@ -78,7 +79,7 @@ async function play(interaction, query, typePlay) {
 
     const collectorFilter = i => i.user.id === interaction.user.id;
     try {
-        const confirmation = await response.awaitMessageComponent({ filter: collectorFilter, time: 60000 });
+        const confirmation = await response.awaitMessageComponent({ filter: collectorFilter, time: COLLECTOR_TIMEOUT });
         if (confirmation.customId === `${typePlay}`) {
             return checkResponse.delete();
         }

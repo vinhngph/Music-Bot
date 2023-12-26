@@ -85,12 +85,10 @@ function sendButtons(queue, status) {
 
 //embeds
 function getQueue(tracks) {
-    const list = tracks.slice(0, 10).map((track, idx) => `${idx + 1} • ${track.title}`).join('\n');
-
     const embed = new EmbedBuilder()
         .setColor(colorEmbed)
         .setTitle(`**Upcoming songs •** ${musicPlaying}`)
-        .setDescription(list);
+        .setDescription(tracks.slice(0, 10).map((track, idx) => `${idx + 1} • ${track.title}`).join('\n'));
 
     if (tracks[11]) {
         embed.setFooter({ text: '•••' });

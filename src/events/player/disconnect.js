@@ -1,5 +1,5 @@
 module.exports = {
-    name: 'queueDelete',
+    name: 'disconnect',
     async execute(queue) {
         const { client, guildId } = queue.metadata;
 
