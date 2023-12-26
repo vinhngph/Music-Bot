@@ -1,6 +1,5 @@
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { Player } = require('discord-player');
-const { AppleMusicExtractor, SpotifyExtractor, SoundCloudExtractor, YoutubeExtractor } = require('@discord-player/extractor');
 
 const fs = require('fs');
 
@@ -22,14 +21,11 @@ const player = new Player(client, {
     skipFFmpeg: false,
     useLegacyFFmpeg: false
 });
-player.extractors.register(AppleMusicExtractor);
-player.extractors.register(SpotifyExtractor);
-player.extractors.register(SoundCloudExtractor);
-player.extractors.register(YoutubeExtractor);
+player.extractors.loadDefault();
 
 client.config = require('./modules/config.js');
-const exe = require('./modules/play.js');
-client.play = exe.play;
+client.bot = require('./modules/functions/playEngine.js');
+client.play = require('./modules/play.js').play;
 
 client.addStatus = new Map();
 client.stButtons = new Map();

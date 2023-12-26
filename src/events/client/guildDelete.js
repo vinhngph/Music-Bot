@@ -4,14 +4,14 @@ module.exports = {
     name: Events.GuildDelete,
     once: true,
     async execute(guild, client) {
-        const channelID = client.useTextChannel.get(guild.id);
-        
+        const serverCount = client.guilds.cache.size;
+
         try {
-            await client.addStatus.delete(channelID);
+            await client.addStatus.delete(guild.id);
         } catch (error) {
             console.error(error);
         } finally {
-            console.log(`[-] Total = ${config.italics(serverCount)}`);
+            console.log(`[-] Total = ${serverCount}`);
         }
     }
 }

@@ -4,6 +4,7 @@ module.exports = {
     name: Events.ClientReady,
     once: true,
     async execute(client) {
+        const serverCount = client.guilds.cache.size;
         try {
             client.user.setPresence({
                 activities: [{
@@ -16,17 +17,16 @@ module.exports = {
 
             const rest = new REST().setToken(process.env.TOKEN);
             const commands = client.commandArray;
+            const guildIds = client.guilds.cache.map(guild => guild.id);
 
-            const guilIDs = client.guilds.cache.map(guild => guild.id);
-
-            for (const guildID of guilIDs) {
-                rest.put(Routes.applicationGuildCommands(process.env.APP_ID, guildID),
+            for (const guildId of guildIds) {
+                rest.put(Routes.applicationGuildCommands(process.env.APP_ID, guildId),
                     { body: commands })
             }
         } catch (error) {
             console.error(error);
         } finally {
-            console.log(`[-] Ready! Logged in as ${client.user.tag}`);
+            console.log(`[-] ${client.user.tag} is running on ${serverCount} servers`);
         }
     }
 }

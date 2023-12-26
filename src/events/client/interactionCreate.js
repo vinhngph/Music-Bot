@@ -1,8 +1,26 @@
-const { Events, PermissionFlagsBits, Collection } = require('discord.js');
+const { Events, Collection, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
     name: Events.InteractionCreate,
     async execute(interaction, client) {
+        const requiredTextPermissions = [
+            { name: 'Manage Messages', permission: PermissionFlagsBits.ManageMessages },
+            { name: 'Send Messages', permission: PermissionFlagsBits.SendMessages },
+            { name: 'Send Messages In Threads', permission: PermissionFlagsBits.SendMessagesInThreads }
+        ]
+        const botTextPermissions = interaction.channel.permissionsFor(interaction.client.user)
+        const missingPermissions = []
+        for (const requiredPermission of requiredTextPermissions) {
+            if (!botTextPermissions.has(requiredPermission.permission)) {
+                missingPermissions.push(`\`${requiredPermission.name}\``)
+            }
+        }
+        if (missingPermissions.length > 0) {
+            await interaction.deferReply({ ephemeral: true })
+            const errorMessage = `Missing permissions: ${missingPermissions.join(', ')}`
+            return interaction.editReply({ content: errorMessage, ephemeral: true })
+        }
+
         const channel = interaction.member.voice.channel;
         if (!channel) return interaction.reply({ content: 'You are not connected to a voice channel!', ephemeral: true });
 

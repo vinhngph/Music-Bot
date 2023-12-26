@@ -220,7 +220,6 @@ function sendEmbeds(queue, track) {
 async function sendMessage(queue, track) {
     const client = queue.metadata.client;
     const channel = queue.metadata.channel;
-
     const guildId = queue.metadata.guildId;
 
     const status = client.stButtons.get(guildId);
@@ -258,11 +257,10 @@ async function sendMessage(queue, track) {
         if (botMessages.size > 1) {
             const scanAll = await channel.messages.fetch();
             const allMess = scanAll.filter((msg) => msg.author.bot && msg.author.id === client.user.id);
+            const oldMess = allMess.map((msg) => msg.id);
 
             try {
-                for (const msg of allMess.values()) {
-                    await msg.delete()
-                };
+                await channel.bulkDelete(oldMess);
             } catch (error) {
                 console.error(error);
             } finally {
@@ -272,11 +270,10 @@ async function sendMessage(queue, track) {
     } else {
         const scanAll = await channel.messages.fetch();
         const allMess = scanAll.filter((msg) => msg.author.bot && msg.author.id === client.user.id);
+        const oldMess = allMess.map((msg) => msg.id);
 
         try {
-            for (const msg of allMess.values()) {
-                await msg.delete()
-            };
+            await channel.bulkDelete(oldMess);
         } catch (error) {
             console.error(error);
         } finally {
