@@ -262,7 +262,7 @@ async function sendMessage(queue, track) {
             try {
                 await channel.bulkDelete(oldMess);
             } catch (error) {
-                console.error(error);
+                return channel.send('⚠️ I will not run well in this text channel. Please, stop playing and run bot on another text channel.');
             } finally {
                 return channel.send({ embeds: embed, components: getButtons });
             }
