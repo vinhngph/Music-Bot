@@ -98,13 +98,16 @@ function getQueue(tracks) {
 }
 
 function getMedia(track) {
-    if (!track) {
-        return new EmbedBuilder()
+    const createEmptyPlaylistEmbed = () =>
+        new EmbedBuilder()
             .setColor(colorEmbed)
             .setTitle('**EMPTY PLAYLIST**')
             .setDescription('N/A\n\n**N/A**')
             .setThumbnail(waitThumbnail)
             .setImage(defaultTaskbar);
+
+    if (!track) {
+        return createEmptyPlaylistEmbed();
     }
 
     const sourceMappings = {
@@ -116,12 +119,19 @@ function getMedia(track) {
 
     const taskbar = sourceMappings[track.source] || defaultTaskbar;
 
+    const formatDuration = (ms) => {
+        const minutes = String((ms / 60000) | 0).padStart(2, '0');
+        const seconds = String(((ms % 60000) / 1000) | 0).padStart(2, '0');
+        return `${minutes}:${seconds}`;
+    }
+    const duration = /^\d{2}:\d{2}$/.test(track.raw.duration) ? track.raw.duration : formatDuration(track.raw.duration);
+
     return new EmbedBuilder()
         .setColor(colorEmbed)
         .setTitle(`**${track.title}**`)
         .setURL(track.url)
-        .setDescription(`${track.duration}\n\n**${track.author}**`)
-        .setThumbnail(track.thumbnail)
+        .setDescription(`${track.raw.live ? 'Live' : duration}\n\n**${track.author}**`)
+        .setThumbnail(track.source === 'youtube' ? track.raw.thumbnail.url : track.thumbnail)
         .setImage(taskbar);
 }
 

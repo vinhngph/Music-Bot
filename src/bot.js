@@ -21,7 +21,15 @@ const player = new Player(client, {
     skipFFmpeg: false,
     useLegacyFFmpeg: false
 });
-player.extractors.loadDefault();
+
+(async () => {
+    try {
+        await player.extractors.loadDefault();
+    } catch (error) {
+        console.error(error);
+    }
+})();
+
 
 client.config = require('./modules/config.js');
 client.bot = require('./modules/functions/playEngine.js');

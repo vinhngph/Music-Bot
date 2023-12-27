@@ -9,50 +9,41 @@ async function play(interaction, query, typePlay) {
     const checkResponse = await interaction.deferReply({ ephemeral: true });
     const player = useMainPlayer();
 
-    //direct play if this query is a url
     if (validURL.isUri(query)) {
-        //checking the duration 
-        const check = await player.search(query);
-        if (check.tracks[0].durationMS > MAX_DURATION) {
-            return interaction.editReply({ content: 'This music link is over 3 hours.', ephemeral: true });
-        }
-
-        //main play engine
-        try {
-            if (typePlay !== 'insert-menu') {
-                await player.play(interaction.member.voice.channel, query, {
-                    nodeOptions: {
-                        metadata: interaction,
-                        disableFilterer: true,
-                        defaultFFmpegFilters: false,
-                        volume: 50
-                    }
-                });
-            } else {
-                const result = await player.search(query);
-                const queue = useQueue(interaction.guildId);
-                queue.insertTrack(result.tracks[0], 0);
-            }
-        } catch (error) {
+        const result = await player.search(query);
+        if (!result)
             return interaction.editReply({ content: 'This music link is not supported.', ephemeral: true });
-        } finally {
-            return checkResponse.delete();
+
+        if (result.tracks[0].durationMS > MAX_DURATION)
+            return interaction.editReply({ content: 'This music link is over 3 hours.', ephemeral: true });
+
+        if (typePlay !== 'insert-menu') {
+            player.play(interaction.member.voice.channel, query, {
+                nodeOptions: {
+                    metadata: interaction,
+                    disableFilterer: true,
+                    defaultFFmpegFilters: false,
+                    volume: 50
+                }
+            });
+        } else {
+            const queue = useQueue(interaction.guildId);
+            queue.insertTrack(result.tracks[0], 0);
         }
+        return checkResponse.delete();
     }
 
     const { client, guildId } = interaction;
     const bot = client.bot;
     const engine = bot.getEngine(client, guildId);
 
-    let result;
-    try {
-        result = await player.search(query, {
-            searchEngine: bot.searchEngine(engine),
-            requestedBy: interaction.member
-        })
-    } catch (error) {
-        return interaction.editReply({ content: `Your search did not match any results.`, ephemeral: true });
-    }
+    const result = await player.search(query, {
+        searchEngine: bot.searchEngine(engine),
+        requestedBy: interaction.member
+    })
+
+    if (!result)
+        return interaction.editReply({ content: 'Cannot find your search.', ephemeral: true });
 
     const options = result.tracks.slice(0, 10).map((track) => {
         const url = track.url;
