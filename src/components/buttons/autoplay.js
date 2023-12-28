@@ -16,7 +16,7 @@ module.exports = {
             queue.setRepeatMode(QueueRepeatMode.AUTOPLAY);
         }
 
-        await client.config.sendMessage(queue);
+        await client.config.sendMessage(queue, true);
         return response.delete();
     }
 }
