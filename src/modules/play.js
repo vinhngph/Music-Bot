@@ -45,16 +45,15 @@ async function play(interaction, query, typePlay) {
     if (!result)
         return interaction.editReply({ content: 'Cannot find your search.', ephemeral: true });
 
-    const options = result.tracks.slice(0, 10).map((track) => {
+    const options = result.tracks.slice(0, 9).map((track) => {
         const url = track.url;
-        if (url.length > 100) {
-            return null;
-        }
 
-        return new StringSelectMenuOptionBuilder()
-            .setLabel(bot.shortString(track.title))
-            .setValue(bot.shortUrl(url, engine))
-            .setDescription(`${bot.shortString(track.author)} • ${track.duration}`)
+        return url.length <= 100
+            ? new StringSelectMenuOptionBuilder()
+                .setLabel(bot.shortString(track.title))
+                .setValue(bot.shortUrl(url, engine))
+                .setDescription(`${bot.shortString(track.author)} • ${track.duration}`)
+            : null;
     }).filter(option => option !== null);
 
     const select = new StringSelectMenuBuilder()

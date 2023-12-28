@@ -97,16 +97,21 @@ function getQueue(tracks) {
     return embed;
 }
 
-function getMedia(track) {
-    const createEmptyPlaylistEmbed = () =>
-        new EmbedBuilder()
-            .setColor(colorEmbed)
-            .setTitle('**EMPTY PLAYLIST**')
-            .setDescription('N/A\n\n**N/A**')
-            .setThumbnail(waitThumbnail)
-            .setImage(defaultTaskbar);
+const createEmptyPlaylistEmbed = () => new EmbedBuilder()
+    .setColor(colorEmbed)
+    .setTitle('**EMPTY PLAYLIST**')
+    .setDescription('N/A\n\n**N/A**')
+    .setThumbnail(waitThumbnail)
+    .setImage(defaultTaskbar);
 
-    if (!track) {
+const formatDuration = (ms) => {
+    const minutes = String((ms / 60000) | 0).padStart(2, '0');
+    const seconds = String(((ms % 60000) / 1000) | 0).padStart(2, '0');
+    return `${minutes}:${seconds}`;
+}
+
+function getMedia(track, status) {
+    if (!status) {
         return createEmptyPlaylistEmbed();
     }
 
@@ -118,25 +123,26 @@ function getMedia(track) {
     };
 
     const taskbar = sourceMappings[track.source] || defaultTaskbar;
-
-    const formatDuration = (ms) => {
-        const minutes = String((ms / 60000) | 0).padStart(2, '0');
-        const seconds = String(((ms % 60000) / 1000) | 0).padStart(2, '0');
-        return `${minutes}:${seconds}`;
-    }
     const duration = /^\d{2}:\d{2}$/.test(track.raw.duration) ? track.raw.duration : formatDuration(track.raw.duration);
+
+    const shortString = (input) => {
+        const length = 40;
+        if (input.length <= length) return input;
+
+        return input.substring(0, length - 3) + "...";
+    }
 
     return new EmbedBuilder()
         .setColor(colorEmbed)
-        .setTitle(`**${track.title}**`)
+        .setTitle(`**${shortString(track.title)}**`)
         .setURL(track.url)
         .setDescription(`${track.raw.live ? 'Live' : duration}\n\n**${track.author}**`)
         .setThumbnail(track.source === 'youtube' ? track.raw.thumbnail.url : track.thumbnail)
         .setImage(taskbar);
 }
 
-function sendEmbeds(queue) {
-    const embed = getMedia(queue.currentTrack);
+function sendEmbeds(queue, status) {
+    const embed = getMedia(queue.currentTrack, status);
     const tracks = queue.tracks.toArray();
 
     if (tracks[0]) {
@@ -148,11 +154,11 @@ function sendEmbeds(queue) {
     }
 }
 
-async function sendMessage(queue) {
+async function sendMessage(queue, status) {
     const { client, channel, guildId } = queue.metadata;
     const btStatus = client.stButtons.get(guildId);
 
-    const embeds = sendEmbeds(queue);
+    const embeds = sendEmbeds(queue, status);
     const buttons = sendButtons(queue, btStatus);
 
     //checking the latest message

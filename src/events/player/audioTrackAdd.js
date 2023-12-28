@@ -9,6 +9,6 @@ module.exports = {
             return client.addStatus.set(guildId, true);
         }
 
-        return client.config.sendMessage(queue);
+        return client.config.sendMessage(queue, true);
     }
 }
