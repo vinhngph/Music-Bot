@@ -1,3 +1,4 @@
+# Stage 1 - BUILD
 FROM node:lts-alpine AS BUILD
 
 WORKDIR /build
@@ -8,28 +9,34 @@ RUN apk update && \
 
 USER node 
 
-COPY --chown=node:node package.json ./
+# Build source code
+COPY --chown=node:node ./src/. ./build
+RUN npm init -y && \
+    npm install --save-dev @babel/core @babel/cli && \
+    ./node_modules/.bin/babel build --out-dir src && \
+    rm -rf package.json package-lock.json ./node_modules/ ./build/
 
-RUN npm install
+# Build dependencies
+COPY --chown=node:node ./package.json ./
+RUN npm install --omit=dev && \
+    rm -rf package-lock.json package.json
+    
+# Copy .env
+COPY --chown=node:node ./.env ./
+#---------------------------------------------------------------------------------------
 
-COPY --chown=node:node . .
-
-RUN npm run deploy && \
-    rm -rf node_modules package-lock.json && \
-    npm install --omit=dev && \
-    rm -rf package-lock.json package.json .dockerignore
-
-
+# Stage 2 - DEPLOY
 FROM node:lts-alpine
 
-WORKDIR /vinz
+WORKDIR /project
 
 RUN apk update && \
     apk add --no-cache ffmpeg && \
-    chown node:node /vinz
+    chown node:node /project
 
 USER node
 
-COPY --chown=node:node --from=BUILD /build/ /vinz/
+COPY --chown=node:node --from=BUILD ./build/ .
 
 CMD [ "node","./src/index.js" ]
+#---------------------------------------------------------------------------------------
